@@ -17,9 +17,7 @@ from bs4 import BeautifulSoup
 
 def PersonLookup(ID):
   url = "http://academictree.org/neurotree/peopleinfo.php?pid="+str(ID)
-  #url = "http://neurotree.org/neurotree/peopleinfo.php?pid="+str(ID)
   headers = {
-  #'Host': 'neurotree.org', # 'academictree.org',
   'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:58.0) Gecko/20100101 Firefox/58.0',
   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
   'Accept-Language': 'en-US,en;q=0.5',
@@ -54,14 +52,9 @@ def PersonLookup(ID):
 
   # oh my god beautiful soup is amazing
   soup = BeautifulSoup(f, 'html.parser')
-
-  #print(soup.find_all('a'))
-  
   
   AdvisorList=[]
   
-  # this is nt robust
-  # errors when an advisor does not have a location, or no link on a location
   for x in soup.find_all('table', "connection_list"):
     if x.parent.parent("h4")[0].string=="Parents":
       for row in x("tr"):
@@ -92,8 +85,8 @@ class Person:
     print("  "+self.university)
 
 
-l = PersonLookup(sys.argv[1])
 
+l = PersonLookup(sys.argv[1])
 
 for x in l:
   x.debugprint()

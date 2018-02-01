@@ -25,17 +25,7 @@ function AddPerson(person):
 
 # given a person, gives that person's parents in an array
 function GetParents(person):
-  # todo
-  return []
-
-
-'''
-class Person:
-  self.__init__(self, name, tree_id,uni):
-    self.name=name
-    self.ID = tree_id
-    self.university=uni
-'''
+  return hr.PersonLookup(person.ID)
 
 
 # make sure we comply with academictree's crawler policy

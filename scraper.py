@@ -8,7 +8,7 @@ import urllib
 import networkx as nx
 import matplotlib.pyplot as plt
 
-import sys
+import sys, time
 
 import http_requests as hr
 
@@ -25,18 +25,22 @@ G = nx.DiGraph()
 #   add those people to the graph
 #   add directional edges to those people
 def AddPerson(person,depth):
-  depth+=1
   parents=GetParents(person)
   for p in parents:
     d=DictFromPersonObject(person)
+    in_graph=False
+    if p.name in G:
+      in_graph=True
+    else:
+      print("Adding "+p.name+" to graph")
     G.add_node(p.name,attr_dict=d)
     G.add_edge(p.name,person.name)
-    if depth<5:
-      AddPerson(p,depth) # dangerous without a stopping condition, but kinda the point of the whole thing
+    if depth<7 and not in_graph:
+        AddPerson(p,depth+1) # dangerous without a stopping condition, but kinda the point of the whole thing
 
 # given a person, gives that person's parents in an array
 def GetParents(person):
-  print("making http request")
+  print("making http request at t="+str(time.strftime("%H:%M:%S")))
   return hr.PersonLookup(person.ID)
 
 
@@ -48,16 +52,11 @@ def DictFromPersonObject(person):
   return d
 
 
-
-
-
-### label stuff has not been bugtested yet ###
-##############################################
 def DrawGraph(G,ls):
   #nx.draw_networkx(G, with_labels=True, pos=nx.spring_layout(G), labels=ls)
   pos=nx.nx_agraph.graphviz_layout(G,prog='dot',args='')
   nx.draw(G, pos)
-  nx.draw_networkx_labels(G,pos, labels=ls)
+  nx.draw_networkx_labels(G,pos, labels=ls, font_size=10)
   plt.show()
 
 def MakeLabels(G):
@@ -65,25 +64,31 @@ def MakeLabels(G):
   for node in G.nodes():
     labels[node]=node
   return labels
-##############################################
 
 
 
+
+read=True
 
 if sys.argv[1]=="read":
   read=True
-else:
+elif sys.argv[1]=="scrape":
   read=False
+else:
+  print("error: argument 1 must either be 'read' or 'scrape'")
+  sys.exit()
 
 if not read:
-  AddPerson(hr.PersonLookup(sys.argv[1])[0],0)
+  persons=sys.argv[2].split(",")
+  for person in persons:
+    AddPerson(hr.PersonLookup(person)[0],0)
   
   # maximum recursion depth exceeded [???]
   # this is a lame solution but it works
   sys.setrecursionlimit(10000)
-  nx.write_gpickle(G,"graph_pickle")
+  nx.write_gpickle(G,"./pickled_graphs/"+str(sys.argv[2]))
 else:
-  G=nx.read_gpickle("graph_pickle")
+  G=nx.read_gpickle("./pickled_graphs/"+str(sys.argv[2]))
 
 
 

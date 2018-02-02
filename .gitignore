@@ -1,1 +1,4 @@
 test.txt
+*.pyc
+/__pycache__/
+graph_pickle

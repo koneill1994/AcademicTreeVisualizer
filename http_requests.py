@@ -84,10 +84,11 @@ class Person:
     print("  "+self.ID)
     print("  "+self.university)
 
-
+'''
 
 l = PersonLookup(sys.argv[1])
 
 for x in l:
   x.debugprint()
   print("")
+'''

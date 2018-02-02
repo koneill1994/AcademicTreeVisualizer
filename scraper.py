@@ -23,9 +23,10 @@ def AddPerson(person,depth):
   depth+=1
   parents=GetParents(person)
   for p in parents:
-    G.add_node(p)
-    G.add_edge(p,person)
-    if depth<4:
+    d=DictFromPersonObject(person)
+    G.add_node(p.name,attr_dict=d)
+    G.add_edge(p.name,person.name)
+    if depth<2:
       AddPerson(p,depth) # dangerous without a stopping condition, but kinda the point of the whole thing
 
 # given a person, gives that person's parents in an array
@@ -34,38 +35,55 @@ def GetParents(person):
   return hr.PersonLookup(person.ID)
 
 
+def DictFromPersonObject(person):
+  d={}
+  d['name']=person.name
+  d['ID']=person.ID
+  d['university']=person.university
+  return d
+
+
+
 
 
 ### label stuff has not been bugtested yet ###
 ##############################################
 def DrawGraph(G,ls):
-  nx.draw(G, with_labels=True, labels=ls)
+  #nx.draw_networkx(G, with_labels=True, pos=nx.spring_layout(G), labels=ls)
+  nx.draw(G)
+  nx.draw_networkx_labels(G,pos=nx.spring_layout(G), labels=ls)
   plt.show()
 
 def MakeLabels(G):
   labels={}
-  for n in range(len(G)):
-    labels[n]=G[n].name
+  lc=0
+  for node in G.nodes():
+    labels[lc]=node
+    lc+=1
   return labels
 ##############################################
 
 
 
-# make sure we comply with academictree's crawler policy
-# wouldn't want to piss off the site admin
-# crawl-delay is 10 seconds 
-'''
-rp = urllib.robotparser.RobotFileParser()
-rp.set_url('https://academictree.org/robots.txt')
-rp.read()
-'''
 
-AddPerson(hr.PersonLookup(sys.argv[1])[0],0)
 
-#nx.write_gpickle(G,"graph_pickle")
-# maximum recursion depth exceeded [???]
+read=True
 
-DrawGraph(G)
+if not read:
+  AddPerson(hr.PersonLookup(sys.argv[1])[0],0)
+  
+  # maximum recursion depth exceeded [???]
+  # this is a lame solution but it works
+  sys.setrecursionlimit(10000)
+  nx.write_gpickle(G,"graph_pickle")
+else:
+  G=nx.read_gpickle("graph_pickle")
+
+
+
+DrawGraph(G,MakeLabels(G))
+
+
 
 # ok this seems hard i give up
 # academictree pages don't have an easy way to grab data from them

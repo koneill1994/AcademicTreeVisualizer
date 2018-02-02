@@ -12,6 +12,11 @@ import sys
 
 import http_requests as hr
 
+
+
+
+
+
 G = nx.DiGraph()
 
 
@@ -26,7 +31,7 @@ def AddPerson(person,depth):
     d=DictFromPersonObject(person)
     G.add_node(p.name,attr_dict=d)
     G.add_edge(p.name,person.name)
-    if depth<2:
+    if depth<5:
       AddPerson(p,depth) # dangerous without a stopping condition, but kinda the point of the whole thing
 
 # given a person, gives that person's parents in an array
@@ -50,24 +55,25 @@ def DictFromPersonObject(person):
 ##############################################
 def DrawGraph(G,ls):
   #nx.draw_networkx(G, with_labels=True, pos=nx.spring_layout(G), labels=ls)
-  nx.draw(G)
-  nx.draw_networkx_labels(G,pos=nx.spring_layout(G), labels=ls)
+  pos=nx.nx_agraph.graphviz_layout(G,prog='dot',args='')
+  nx.draw(G, pos)
+  nx.draw_networkx_labels(G,pos, labels=ls)
   plt.show()
 
 def MakeLabels(G):
   labels={}
-  lc=0
   for node in G.nodes():
-    labels[lc]=node
-    lc+=1
+    labels[node]=node
   return labels
 ##############################################
 
 
 
 
-
-read=True
+if sys.argv[1]=="read":
+  read=True
+else:
+  read=False
 
 if not read:
   AddPerson(hr.PersonLookup(sys.argv[1])[0],0)

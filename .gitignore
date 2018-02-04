@@ -7,3 +7,5 @@ graph_pickle
 *.png
 *.jpg
 *.pdf
+*.json
+*.gexf

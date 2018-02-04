@@ -27,6 +27,8 @@ import sys, time
 
 import http_requests as hr
 
+from networkx.readwrite import json_graph
+import json
 
 
 
@@ -78,6 +80,12 @@ def MakeLabels(G):
     labels[node]=node
   return labels
 
+def SaveAsJSON():
+  data = json_graph.node_link_data(G)
+  with open("./html/nld_"+str(sys.argv[2])+".json", 'w') as fp:
+    json.dump(data, fp)
+
+
 
 maxdepth=4
 
@@ -108,6 +116,9 @@ else:
   G=nx.read_gpickle("./pickled_graphs/"+str(sys.argv[2]))
 
 
+SaveAsJSON()
 
-nx.drawing.nx_pydot.write_dot(G, "./pickled_graphs/"+str(sys.argv[2])+".dot")
-DrawGraph(G,MakeLabels(G))
+#nx.write_gexf(G, "./pickled_graphs/"+str(sys.argv[2])+".gexf")
+
+
+#DrawGraph(G,MakeLabels(G))

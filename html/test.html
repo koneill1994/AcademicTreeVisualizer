@@ -1,3 +1,7 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<meta charset="utf-8"/>
+
 <html>
 <head>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
@@ -14,46 +18,39 @@
 <body>
 <div id="mynetwork"></div>
 
+
 <script type="text/javascript">
 
-//s=fs.readFile("745730.dot", "utf8", function(err, data) {...});
-
-var file = new File(["foo"], "745730.dot", {
-  type: "text/plain",
-});
-console.log(file);
-
-var reader = new FileReader();
-reader.onload = function(e) {
-  var text = reader.result;
-}
-reader.readAsText(file);
-
-console.log(reader.result);
-
-
-
-var parsedData = vis.network.convertDot(reader.result);
-
-var data = {
-  nodes: parsedData.nodes,
-  edges: parsedData.edges
+function loadJSON(path, success, error) {
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        success(JSON.parse(xhr.responseText));
+      }
+      else {
+        error(xhr);
+      }
+    }
+  };
+  xhr.open('GET', path, true);
+  xhr.send();
 }
 
 
+var gephiJSON = loadJSON("./nld_745730.json");
+var data = vis.network.convertGephi(gephiJSON);
+  
+  
+  
+  // create a network
+  var container = document.getElementById('mynetwork');
+  
 
-    // create a network
-    var container = document.getElementById('mynetwork');
+  // initialize your network!
+  var network = new vis.Network(container, data);
 
-    // provide the data in the vis format
-    var data = {
-        nodes: nodes,
-        edges: edges
-    };
-    var options = {};
-
-    // initialize your network!
-    var network = new vis.Network(container, data, options);
+    
 </script>
 </body>
 </html>

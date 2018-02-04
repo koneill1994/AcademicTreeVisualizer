@@ -9,13 +9,13 @@
 
     <style type="text/css">
         #mynetwork {
-            width: 1000px;
-            height: 1000px;
+            width: 1400px;
+            height: 720px;
             border: 1px solid lightgray;
         }
     </style>
 </head>
-<body>
+<body onload="draw();">
 <div id="mynetwork"></div>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
@@ -35,11 +35,15 @@ $.ajaxSetup({beforeSend: function(xhr){
 }
 });
 
-
-$.getJSON("./nld_745730.json",{format: "json"}, function(json_dat){
-
+function draw(){
+  $.getJSON("./nld_745730.json",{format: "json"}, function(json_dat){
+  
+  if(json_dat["links"]!= undefined){
+    json_dat["edges"]=json_dat["links"]
+  }
+  
   console.log("test2");
-  console.log(json_dat);
+  console.log(json_dat["edges"]);
   // have to find a way to automatically replace "links" with "edges in the json file
   var parseddata = vis.network.gephiParser.parseGephi(json_dat, {});
   
@@ -49,7 +53,10 @@ $.getJSON("./nld_745730.json",{format: "json"}, function(json_dat){
   // create a network
   var container = document.getElementById('mynetwork');
   
-  
+  for (var node in parseddata.nodes){
+    parseddata.nodes[node]["label"]=parseddata.nodes[node]["id"]
+    console.log(parseddata.nodes[node])
+  }
   
   var data = {
     nodes: parseddata.nodes,
@@ -60,14 +67,6 @@ $.getJSON("./nld_745730.json",{format: "json"}, function(json_dat){
   var options = {
   physics:{
     enabled: true,
-    barnesHut: {
-      gravitationalConstant: -2000,
-      centralGravity: 0.3,
-      springLength: 95,
-      springConstant: 0.04,
-      damping: 0.09,
-      avoidOverlap: 0
-    },
     forceAtlas2Based: {
       gravitationalConstant: -50,
       centralGravity: 0.01,
@@ -87,12 +86,12 @@ $.getJSON("./nld_745730.json",{format: "json"}, function(json_dat){
       centralGravity: 0.0,
       springLength: 100,
       springConstant: 0.01,
-      nodeDistance: 120,
+      nodeDistance: 200,
       damping: 0.09
     },
     maxVelocity: 50,
     minVelocity: 0.1,
-    solver: 'barnesHut',
+    solver: 'hierarchicalRepulsion',
     stabilization: {
       enabled: true,
       iterations: 1000,
@@ -105,7 +104,8 @@ $.getJSON("./nld_745730.json",{format: "json"}, function(json_dat){
   },
   layout: {
     hierarchical: {
-      direction: "DU"
+      direction: "UD",
+      sortMethod: "directed",
     }
   }
 
@@ -124,6 +124,7 @@ $.getJSON("./nld_745730.json",{format: "json"}, function(json_dat){
     console.log( "Request Failed: " + err );
   })
   ;
+}
 </script>
 </body>
 </html>

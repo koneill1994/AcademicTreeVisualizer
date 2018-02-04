@@ -123,7 +123,7 @@ else:
 
 SaveAsJSON()
 
-webbrowser.open("file://html/test.html")
+webbrowser.open("./html/test.html")
 
 #nx.write_gexf(G, "./pickled_graphs/"+str(sys.argv[2])+".gexf")
 

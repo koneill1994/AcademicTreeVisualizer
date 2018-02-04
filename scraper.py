@@ -30,6 +30,8 @@ import http_requests as hr
 from networkx.readwrite import json_graph
 import json
 
+import webbrowser
+
 
 
 def GetPerson(ID_no):
@@ -65,6 +67,7 @@ def DictFromPersonObject(person,genesis):
   d['name']=person.name
   d['ID']=person.ID
   d['genesis']=genesis
+  d['label']=person.name
   return d
 
 
@@ -84,7 +87,9 @@ def SaveAsJSON():
   data = json_graph.node_link_data(G)
   with open("./html/nld_"+str(sys.argv[2])+".json", 'w') as fp:
     json.dump(data, fp)
-
+# we need this function to:
+#   1: automagically change "links" to "edges" in the json file
+#   2: copy the name value in attr_dict to a label value outside of attr_dict
 
 
 maxdepth=4
@@ -117,6 +122,8 @@ else:
 
 
 SaveAsJSON()
+
+webbrowser.open("file://html/test.html")
 
 #nx.write_gexf(G, "./pickled_graphs/"+str(sys.argv[2])+".gexf")
 

@@ -9,8 +9,8 @@
 
     <style type="text/css">
         #mynetwork {
-            width: 600px;
-            height: 400px;
+            width: 1000px;
+            height: 1000px;
             border: 1px solid lightgray;
         }
     </style>
@@ -18,39 +18,112 @@
 <body>
 <div id="mynetwork"></div>
 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+
+
 
 <script type="text/javascript">
 
-function loadJSON(path, success, error) {
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        success(JSON.parse(xhr.responseText));
-      }
-      else {
-        error(xhr);
-      }
-    }
-  };
-  xhr.open('GET', path, true);
-  xhr.send();
+console.log("test1");
+
+
+$.ajaxSetup({beforeSend: function(xhr){
+  if (xhr.overrideMimeType)
+  {
+    xhr.overrideMimeType("application/json");
+  }
 }
+});
 
 
-var gephiJSON = loadJSON("./nld_745730.json");
-var data = vis.network.convertGephi(gephiJSON);
+$.getJSON("./nld_745730.json",{format: "json"}, function(json_dat){
+
+  console.log("test2");
+  console.log(json_dat);
+  // have to find a way to automatically replace "links" with "edges in the json file
+  var parseddata = vis.network.gephiParser.parseGephi(json_dat, {});
   
-  
+  console.log("test3");
+  console.log(parseddata);
   
   // create a network
   var container = document.getElementById('mynetwork');
   
+  
+  
+  var data = {
+    nodes: parseddata.nodes,
+    edges: parseddata.edges
+  };
+  
+  
+  var options = {
+  physics:{
+    enabled: true,
+    barnesHut: {
+      gravitationalConstant: -2000,
+      centralGravity: 0.3,
+      springLength: 95,
+      springConstant: 0.04,
+      damping: 0.09,
+      avoidOverlap: 0
+    },
+    forceAtlas2Based: {
+      gravitationalConstant: -50,
+      centralGravity: 0.01,
+      springConstant: 0.08,
+      springLength: 100,
+      damping: 0.4,
+      avoidOverlap: 0
+    },
+    repulsion: {
+      centralGravity: 0.2,
+      springLength: 200,
+      springConstant: 0.05,
+      nodeDistance: 100,
+      damping: 0.09
+    },
+    hierarchicalRepulsion: {
+      centralGravity: 0.0,
+      springLength: 100,
+      springConstant: 0.01,
+      nodeDistance: 120,
+      damping: 0.09
+    },
+    maxVelocity: 50,
+    minVelocity: 0.1,
+    solver: 'barnesHut',
+    stabilization: {
+      enabled: true,
+      iterations: 1000,
+      updateInterval: 100,
+      onlyDynamicEdges: false,
+      fit: true
+    },
+    timestep: 0.5,
+    adaptiveTimestep: true
+  },
+  layout: {
+    hierarchical: {
+      direction: "DU"
+    }
+  }
 
+}
+
+  
+  
   // initialize your network!
-  var network = new vis.Network(container, data);
+  var network = new vis.Network(container, data, options);
+  
+  
 
-    
+  }, "json")
+  .fail(function( jqxhr, textStatus, error ) {
+    var err = textStatus + ", " + error;
+    console.log( "Request Failed: " + err );
+  })
+  ;
 </script>
 </body>
 </html>

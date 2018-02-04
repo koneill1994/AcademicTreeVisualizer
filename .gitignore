@@ -3,4 +3,7 @@ test.txt
 /__pycache__/
 graph_pickle
 /pickled_graphs/*
-/html/*
+*.dot
+*.png
+*.jpg
+*.pdf

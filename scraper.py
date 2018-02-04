@@ -70,7 +70,6 @@ def DrawGraph(G,ls):
   pos=nx.nx_agraph.graphviz_layout(G,prog='dot',args='')
   nx.draw(G, pos)
   nx.draw_networkx_labels(G,pos, labels=ls, font_size=6)
-  plt.savefig("graph.png", dpi=1000)
   plt.show()
 
 def MakeLabels(G):
@@ -110,5 +109,5 @@ else:
 
 
 
+nx.drawing.nx_pydot.write_dot(G, "./pickled_graphs/"+str(sys.argv[2])+".dot")
 DrawGraph(G,MakeLabels(G))
-

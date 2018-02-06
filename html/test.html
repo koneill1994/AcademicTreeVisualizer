@@ -14,8 +14,11 @@
             border: 1px solid lightgray;
         }
     </style>
+    <div id="status">stabilizing</div>
 </head>
 <body onload="draw();">
+  
+ <div id="status"></div>
 <div id="mynetwork"></div>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
@@ -36,26 +39,21 @@ $.ajaxSetup({beforeSend: function(xhr){
 });
 
 function draw(){
-  $.getJSON("./nld_745730.json",{format: "json"}, function(json_dat){
+  $.getJSON("./nld_745730_10.json",{format: "json"}, function(json_dat){
   
   if(json_dat["links"]!= undefined){
     json_dat["edges"]=json_dat["links"]
   }
   
-  console.log("test2");
-  console.log(json_dat["edges"]);
-  // have to find a way to automatically replace "links" with "edges in the json file
   var parseddata = vis.network.gephiParser.parseGephi(json_dat, {});
   
-  console.log("test3");
-  console.log(parseddata);
   
   // create a network
   var container = document.getElementById('mynetwork');
   
   for (var node in parseddata.nodes){
     parseddata.nodes[node]["label"]=parseddata.nodes[node]["id"]
-    console.log(parseddata.nodes[node])
+    //console.log(parseddata.nodes[node])
   }
   
   var data = {
@@ -65,15 +63,19 @@ function draw(){
   
   
   var options = {
-  physics:{
+  configure: {
     enabled: true,
+    showButton: true
+  },
+  physics:{
+    enabled: false,
     forceAtlas2Based: {
       gravitationalConstant: -50,
       centralGravity: 0.01,
       springConstant: 0.08,
       springLength: 100,
       damping: 0.4,
-      avoidOverlap: 0
+      avoidOverlap: 1
     },
     repulsion: {
       centralGravity: 0.2,
@@ -86,7 +88,7 @@ function draw(){
       centralGravity: 0.0,
       springLength: 100,
       springConstant: 0.01,
-      nodeDistance: 200,
+      nodeDistance: 300,
       damping: 0.09
     },
     maxVelocity: 50,
@@ -106,6 +108,7 @@ function draw(){
     hierarchical: {
       direction: "UD",
       sortMethod: "directed",
+      nodeSpacing: 500
     }
   }
 
@@ -116,6 +119,13 @@ function draw(){
   // initialize your network!
   var network = new vis.Network(container, data, options);
   
+  network.on("stabilizationProgress", function(params) {
+                var prog = params.iterations/params.total;
+                status.innerText = Math.round(prog*100)+'%';
+            });
+            network.on("stabilizationIterationsDone", function() {
+                status.innerText = "stabilized";
+  });
   
 
   }, "json")

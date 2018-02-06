@@ -85,14 +85,15 @@ def MakeLabels(G):
 
 def SaveAsJSON():
   data = json_graph.node_link_data(G)
-  with open("./html/nld_"+str(sys.argv[2])+".json", 'w') as fp:
+  with open("./html/nld_"+str(sys.argv[2])+"_"+str(maxdepth)+".json", 'w') as fp:
     json.dump(data, fp)
-# we need this function to:
-#   1: automagically change "links" to "edges" in the json file
-#   2: copy the name value in attr_dict to a label value outside of attr_dict
+    '''
+  d2 = json_graph.tree_data(G)
+  with open("./html/td_"+str(sys.argv[2])+"_"+str(maxdepth)+".json", 'w') as fp:
+    json.dump(data, fp)
+    '''
 
-
-maxdepth=4
+maxdepth=10
 
 
 G = nx.DiGraph()

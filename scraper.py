@@ -69,6 +69,15 @@ def DictFromPersonObject(person,genesis):
   d['genesis']=genesis
   d['label']=person.name
   return d
+# todo: have this function (^^^) add depth as a dictionary attribute
+#   whenever someone comes up in AddPerson, and they already exist in the network:
+#     1. check the current depth against the network's recorded depth
+#     2. set the depth attribute to max(current_depth, depth_attr)
+#   
+# in displaying the hierarchy, these will be the levels at which the nodes will be arranged vertically
+# this will ensure that mentors are strictly above their mentees
+
+
 
 
 def DrawGraph(G,ls):

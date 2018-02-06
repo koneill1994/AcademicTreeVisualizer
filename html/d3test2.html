@@ -22,8 +22,14 @@
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
 
-var svg = d3.select("svg"),
-    width = +svg.attr("width"),
+var svg = d3.select("svg")
+var child = svg.append ("g");
+
+svg.call(d3.zoom().on("zoom", function () {
+              child.attr("transform", d3.event.transform)
+      }))
+
+var width = +svg.attr("width"),
     height = +svg.attr("height");
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
@@ -33,10 +39,10 @@ var simulation = d3.forceSimulation()
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(width / 2, height / 2));
 
-d3.json("nld_745730_4.json", function(error, graph) {
+d3.json("nld_745730_10.json", function(error, graph) {
   if (error) throw error;
 
-  var link = svg.append("g")
+  var link = child.append("g")
       .attr("class", "links")
     .selectAll("line")
     .data(graph.links)
@@ -64,7 +70,7 @@ d3.json("nld_745730_4.json", function(error, graph) {
       .style("stroke-width", function(d) { return Math.sqrt(d.value); });
 */
 
-  var node = svg.selectAll(".node")
+  var node = child.selectAll(".node")
       .data(graph.nodes)
     .enter().append("g")
       .attr("class", "node")

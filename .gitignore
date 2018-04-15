@@ -9,3 +9,4 @@ graph_pickle
 *.pdf
 *.json
 *.gexf
+!nld_745730_10.json

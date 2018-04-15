@@ -65,3 +65,9 @@ import networkx as nx
 def BuildHierarchy(G):
   return
 
+
+# new plan:
+# scrap this
+# save network as a tree
+#   do the balancing dynamically in js
+#   as in http://bl.ocks.org/GerHobbelt/3669455

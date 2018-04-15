@@ -91,18 +91,23 @@ def MakeLabels(G):
   for node in G.nodes():
     labels[node]=node
   return labels
-
-def SaveAsJSON():
+'''
+def GetRootNode(G, root_ID):
+  for node in G.nodes:
+    if 
+'''
+def SaveAsJSON(G):
   data = json_graph.node_link_data(G)
   with open("./html/nld_"+str(sys.argv[2])+"_"+str(maxdepth)+".json", 'w') as fp:
     json.dump(data, fp)
     '''
-  d2 = json_graph.tree_data(G)
+  d2 = json_graph.tree_data(G, root)
   with open("./html/td_"+str(sys.argv[2])+"_"+str(maxdepth)+".json", 'w') as fp:
     json.dump(data, fp)
-    '''
+'''
 
-maxdepth=10
+
+maxdepth=7
 
 
 G = nx.DiGraph()
@@ -131,11 +136,11 @@ else:
   G=nx.read_gpickle("./pickled_graphs/"+str(sys.argv[2]))
 
 
-SaveAsJSON()
+SaveAsJSON(G)
 
 webbrowser.open("./html/test.html")
 
 #nx.write_gexf(G, "./pickled_graphs/"+str(sys.argv[2])+".gexf")
 
 
-#DrawGraph(G,MakeLabels(G))
+DrawGraph(G,MakeLabels(G))
